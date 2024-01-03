@@ -1,0 +1,40 @@
+# Use an official Python runtime as a parent image
+#FROM mcr.microsoft.com/windows:ltsc2019
+#FROM mcr.microsoft.com/windows-cssc/python3.7windows:ltsc2019
+#FROM python:3.7-windowsservercore-1809
+#FROM python:3.10-slim
+
+FROM mcr.microsoft.com/windows/servercore:ltsc2019
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+#ARG HTTP_PROXY
+#ARG HTTPS_PROXY
+ENV http_proxy http://gateway.zscaler.net:443
+ENV https_proxy http://gateway.zscaler.net:443
+COPY nuget.exe .
+
+#RUN powershell -Command Invoke-WebRequest -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile nuget.exe
+
+# Set the NO_PROXY environment variable
+#ENV NO_PROXY=localhost,127.0.0.1
+#RUN pip install --index-url=https://pypi.python.org/simple/ --upgrade --no-cache-dir requests
+#FROM python:3.10-slim
+
+#ADD https://aka.ms/nugetclidl nuget.exe
+ENV PYVER=3.11.5
+RUN nuget.exe install python -ExcludeVersion -Version %PYVER% -OutputDirectory .
+
+ENV PATH=%PATH%;c:\inside\python\tools;c:\inside\python\tools\Scripts
+
+# Install any needed packages specified in requirements.txt
+RUN python -m pip install --trusted-host pypi.org --proxy http://gateway.zscaler.net:443 --no-cache-dir -r requirements.txt --user 
+
+# Make port 8501 available to the world outside this co	ntainer
+EXPOSE 8000
+
+# Run streamlit when the container launches
+CMD ["streamlit", "run", "RFQ_Commercial_docker_docAI.py", "--server.port", "8000", "--server.address", "0.0.0.0"]

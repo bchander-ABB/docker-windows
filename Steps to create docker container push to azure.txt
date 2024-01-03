@@ -1,0 +1,103 @@
+Steps to create docker container image locally and push to azure:
+
+1. Navigate to the path having script, requirements.txt and dockerfile using cd path/to/the/dockerfile/date
+
+2. create docker container in local machine
+
+docker build -t rfqcommercialdocker.azurecr.io/rfq-com-dock-image:latest .
+
+
+for windows use
+docker build -t rfqcommercialdocker.azurecr.io/rfq-com-dock-image:ltsc2019 .
+
+docker build --build-arg http_proxy=http://gateway.zscaler.net:443 --build-arg https_proxy=http://gateway.zscaler.net:443 -t mcr.microsoft.com/windows/servercore:ltsc2019 .
+
+
+where 'rfqcommercialdocker' is the name of the acr (azure container registry) that icreated in azure.
+'rfq-com-dock-image' is the name of the image i want to create
+
+3. Once the docker image is created we need to push to acr. But for that we need to login to azure cli
+
+docker login rfqcommercialdocker.azurecr.io
+
+it wil lask for username, use 'rfqcommercialdocker'
+and for password use 'adAq3Qt8qUV4vEK9QJ0xSCv+hlLe/CsHMYFaoS5uk4+ACRCnnga8'
+
+you can get this from azure acr portal under 'access keys' by clicking 'Admin user'
+
+4. Tag your locally built Docker image with the full path to your Azure Container Registry.
+docker tag your-image-name <your-acr-name>.azurecr.io/your-image-name:latest
+
+docker tag rf-com-docker-image rfqcommercialdocker.azurecr.io/rf-com-docker-image:latest
+
+for windows use
+docker tag rf-com-docker-image:ltsc2019 rfqcommercialdocker.azurecr.io/rf-com-docker-image:ltsc2019
+
+5. Push the tagged Docker image to your Azure Container Registry.
+docker push <your-acr-name>.azurecr.io/your-image-name:latest
+
+docker push rfqcommercialdocker.azurecr.io/rf-com-docker-image:latest
+
+for windows use
+docker push rfqcommercialdocker.azurecr.io/rf-com-docker-image:ltsc2019
+
+
+
+
+---------------------------
+
+docker image name: rf-com-docker-image
+to run the docker container locally: 
+docker run -dp 127.0.0.1:3000:3000 rf-com-docker-image
+
+
+Azure Blob storage credentials
+storage account 
+rfqdeploybhanu
+
+key
+jAMf8dLHOs2cfi1CEKgxL5NmEOOJZGnBrorQd6TU7N0PjNxO6K/CLOWB+dEfjd1RqZnrywOz1aYC+AStSSESQw==
+
+connection string
+DefaultEndpointsProtocol=https;AccountName=rfqdeploybhanu;AccountKey=jAMf8dLHOs2cfi1CEKgxL5NmEOOJZGnBrorQd6TU7N0PjNxO6K/CLOWB+dEfjd1RqZnrywOz1aYC+AStSSESQw==;EndpointSuffix=core.windows.net
+
+
+container/blob name
+webapp-storage
+
+https://rfqdeploybhanu.blob.core.windows.net/webapp-storage
+
+
+blob sas token
+sp=racwd&st=2023-12-29T16:54:43Z&se=2023-12-30T00:54:43Z&sv=2022-11-02&sr=c&sig=YVe8los28CMCAH2hjHnLVXfk7pQXKVTf47rG9nGeCtk%3D
+
+blob sas url
+https://rfqdeploybhanu.blob.core.windows.net/webapp-storage?sp=racwd&st=2023-12-29T16:54:43Z&se=2023-12-30T00:54:43Z&sv=2022-11-02&sr=c&sig=YVe8los28CMCAH2hjHnLVXfk7pQXKVTf47rG9nGeCtk%3D
+
+
+-----------------------------------------------------------
+Acr - container registry credentials
+
+{
+  "passwords": [
+    {
+      "name": "password",
+      "value": "adAq3Qt8qUV4vEK9QJ0xSCv+hlLe/CsHMYFaoS5uk4+ACRCnnga8"
+    },
+    {
+      "name": "password2",
+      "value": "z1Id91cFv/iPPQPGdVnmnhGh+mLTZDLHU7sMHGgr/h+ACRD6W4po"
+    }
+  ],
+  "username": "rfqcommercialdocker"
+-----------------------------------------------------------
+
+Document Intelligence credentials
+
+key: 6943fe9ad42e478a8841ae77c1b8d12e
+Endpoint: https://docai-trained-bhanu.cognitiveservices.azure.com/
+Location: eastus
+
+
+
+ 
